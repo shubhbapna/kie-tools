@@ -98,6 +98,15 @@ export type SwfServiceCatalogFunctionSource =
 export interface SwfServiceCatalogFunction {
   source: SwfServiceCatalogFunctionSource;
   name: string;
-  arguments: Record<string, SwfServiceCatalogFunctionArgumentType>;
+  arguments: SwfServiceCatalogFunctionArguments;
+  requiredArguments?: string[];
   type: SwfServiceCatalogFunctionType;
+}
+
+export interface SwfServiceCatalogFunctionArguments {
+  [key: string]:
+    | SwfServiceCatalogFunctionArgumentType
+    | SwfServiceCatalogFunctionArgumentType[]
+    | SwfServiceCatalogFunctionArguments
+    | SwfServiceCatalogFunctionArguments[];
 }

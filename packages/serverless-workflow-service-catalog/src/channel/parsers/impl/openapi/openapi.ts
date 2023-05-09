@@ -16,6 +16,7 @@
 
 import {
   SwfServiceCatalogFunction,
+  SwfServiceCatalogFunctionArguments,
   SwfServiceCatalogFunctionArgumentType,
   SwfServiceCatalogFunctionSource,
   SwfServiceCatalogFunctionType,
@@ -78,11 +79,12 @@ function extractPathItemFunctions(
     const response = responses["200"] as OpenAPIV3.ResponseObject;
     const name = pathOperation.operationId as string;
 
-    const functionArguments: Record<string, SwfServiceCatalogFunctionArgumentType> = {};
+    const functionArguments: SwfServiceCatalogFunctionArguments = {};
+    const requiredFunctionArguments: string[] = [];
 
     // Looking at operation params
     if (pathOperation.parameters) {
-      extractFunctionArgumentsFromParams(pathOperation.parameters, functionArguments);
+      extractFunctionArgumentsFromParams(pathOperation.parameters, functionArguments, requiredFunctionArguments);
     }
 
     // Looking only at application/json mime types, we might consider others.
@@ -90,7 +92,8 @@ function extractPathItemFunctions(
       extractFunctionArgumentsFromBody(
         body.content[APPLICATION_JSON].schema ?? {},
         serviceOpenApiDocument,
-        functionArguments
+        functionArguments,
+        requiredFunctionArguments
       );
     }
 
@@ -103,7 +106,8 @@ function extractPathItemFunctions(
       extractFunctionArgumentsFromBody(
         response.content[APPLICATION_JSON].schema ?? {},
         serviceOpenApiDocument,
-        functionArguments
+        functionArguments,
+        requiredFunctionArguments
       );
     }
 
@@ -112,6 +116,12 @@ function extractPathItemFunctions(
       name,
       type: SwfServiceCatalogFunctionType.rest,
       arguments: functionArguments,
+      requiredArguments: requiredFunctionArguments.reduce((curr: string[], prev) => {
+        if (!curr.includes(prev)) {
+          curr.push(prev);
+        }
+        return curr;
+      }, []),
     };
     swfServiceCatalogFunctions.push(swfServiceCatalogFunction);
   });
@@ -121,13 +131,18 @@ function extractPathItemFunctions(
 
 function extractFunctionArgumentsFromParams(
   pathParams: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[],
-  functionParams: Record<string, SwfServiceCatalogFunctionArgumentType>
+  functionParams: SwfServiceCatalogFunctionArguments,
+  requiredFunctionArguments: string[]
 ) {
   pathParams.forEach((pathParam) => {
     const name = get(pathParam, "name");
     const type = get(pathParam, "schema.type");
+    const required = get(pathParam, "required");
     if (name && type) {
       functionParams[name] = resolveArgumentType(type);
+    }
+    if (required && Array.isArray(required)) {
+      requiredFunctionArguments.push(...required);
     }
   });
 }
@@ -135,18 +150,37 @@ function extractFunctionArgumentsFromParams(
 function extractFunctionArgumentsFromBody(
   schema: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
   doc: OpenAPIV3.Document,
-  functionParams: Record<string, SwfServiceCatalogFunctionArgumentType>
+  functionParams: SwfServiceCatalogFunctionArguments,
+  requiredFunctionArguments: string[]
 ) {
   const schemaObject: OpenAPIV3.SchemaObject = extractSchemaObject(schema, doc);
+  if (schemaObject.required) {
+    requiredFunctionArguments.push(...schemaObject.required);
+  }
   if (schemaObject.properties) {
     Object.entries(schemaObject.properties).forEach(
       ([propertyName, propertySchema]: [string, OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject]) => {
         const asReference = propertySchema as OpenAPIV3.ReferenceObject;
         if (asReference.$ref) {
-          functionParams[propertyName] = SwfServiceCatalogFunctionArgumentType.object;
+          functionParams[propertyName] = {};
+          extractFunctionArgumentsFromBody(
+            propertySchema,
+            doc,
+            functionParams[propertyName] as SwfServiceCatalogFunctionArguments,
+            requiredFunctionArguments
+          );
         } else {
           const asSchema = propertySchema as OpenAPIV3.SchemaObject;
-          if (asSchema.type) {
+          if (asSchema.type === "array") {
+            const arrayAsSchema = asSchema.items as OpenAPIV3.SchemaObject;
+            if (arrayAsSchema.type) {
+              functionParams[propertyName] = [resolveArgumentType(arrayAsSchema.type)];
+            } else {
+              const result: SwfServiceCatalogFunctionArguments = {};
+              extractFunctionArgumentsFromBody(arrayAsSchema, doc, result, requiredFunctionArguments);
+              functionParams[propertyName] = [result];
+            }
+          } else if (asSchema.type) {
             functionParams[propertyName] = resolveArgumentType(asSchema.type);
           }
         }
