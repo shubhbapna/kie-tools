@@ -42,6 +42,7 @@ export type SwfLanguageServiceCommandTypes = EditorLanguageServiceCommandTypes<
   | "swf.ls.commands.OpenServiceRegistriesConfig"
   | "swf.ls.commands.LogInServiceRegistries"
   | "swf.ls.commands.RefreshServiceRegistries"
+  | "swf.ls.commands.OpenArgumentsForm"
 >;
 
 export type SwfLanguageServiceCommandArgs = EditorLanguageServiceCommandArgs & {
@@ -54,6 +55,12 @@ export type SwfLanguageServiceCommandArgs = EditorLanguageServiceCommandArgs & {
   "swf.ls.commands.OpenServiceRegistriesConfig": {};
   "swf.ls.commands.LogInServiceRegistries": {};
   "swf.ls.commands.RefreshServiceRegistries": {};
+  "swf.ls.commands.OpenArgumentsForm": {
+    operationId: string;
+    openApiSchemaLocation: string;
+    startPosition: Position;
+    endPosition: Position;
+  };
 };
 
 export type SwfLanguageServiceCommandIds = EditorLanguageServiceCommandIds<SwfLanguageServiceCommandTypes>;

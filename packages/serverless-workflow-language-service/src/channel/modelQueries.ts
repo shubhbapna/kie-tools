@@ -56,7 +56,7 @@ export function getFunctions(rootNode: jsonc.Node) {
     rootNode,
     path: ["functions"],
     nodeType: "array",
-    fields: ["name", "operation"],
+    fields: ["name", "operation", "type"],
   }).filter((f) => f.name && f.operation);
 }
 

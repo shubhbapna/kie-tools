@@ -20,10 +20,17 @@ import {
   createOpenCompletionItemsCodeLenses,
   EditorLanguageServiceCodeLenses,
   EditorLanguageServiceCodeLensesFunctionsArgs,
+  findNodeAtLocation,
+  nodeUpUntilType,
+  getLineContentFromOffset,
+  getLineNumberFromOffset,
+  nodeLastDescendent,
 } from "@kie-tools/json-yaml-language-service/dist/channel";
-import { CodeLens } from "vscode-languageserver-types";
+import { FileLanguage } from "../api";
+import { CodeLens, Position } from "vscode-languageserver-types";
 import { SwfLanguageServiceCommandArgs, SwfLanguageServiceCommandTypes } from "../api";
 import { SwfLanguageServiceConfig } from "./SwfLanguageService";
+import * as swfModelQueries from "./modelQueries";
 
 export type SwfLanguageServiceCodeLensesFunctionsArgs =
   EditorLanguageServiceCodeLensesFunctionsArgs<SwfLanguageServiceCommandTypes> & {
@@ -60,6 +67,80 @@ export const SwfLanguageServiceCodeLenses: EditorLanguageServiceCodeLenses = {
       title: "+ Add state...",
       nodeType: "array",
     }),
+
+  addFunctionArguments: (args: { language: FileLanguage } & SwfLanguageServiceCodeLensesFunctionsArgs): CodeLens[] => {
+    const restFunctions = swfModelQueries.getFunctions(args.rootNode);
+    //.filter((f) => f.type === "rest");
+
+    return createCodeLenses({
+      document: args.document,
+      rootNode: args.rootNode,
+      jsonPath: ["states", "*", "actions", "*", "functionRef", "arguments"],
+      positionLensAt: "begin",
+      commandDelegates: ({ position, node }) => {
+        const commandName: SwfLanguageServiceCommandTypes = "swf.ls.commands.OpenArgumentsForm";
+        const startNode = nodeUpUntilType(node.parent, "object");
+        if (!startNode) {
+          return [];
+        }
+
+        const swfFunctionRefName: string = findNodeAtLocation(startNode, ["refName"])?.value;
+        const operation = restFunctions.find((f) => f.name === swfFunctionRefName)?.operation;
+
+        if (
+          node.type !== "object" ||
+          !args.codeCompletionStrategy.shouldCreateCodelens({ node, commandName, content: args.content }) ||
+          !swfFunctionRefName ||
+          !operation
+        ) {
+          return [];
+        }
+
+        const lastDescendent = nodeLastDescendent(node);
+        const lastDescendentLine = getLineContentFromOffset(args.content, lastDescendent.offset);
+
+        let startPosition: Position = {
+          line: position.line + 1,
+          character: position.character,
+        };
+        let endPosition: Position = {
+          line: getLineNumberFromOffset(args.content, lastDescendent.offset) + 1,
+          character: lastDescendentLine.length + 1,
+        };
+
+        if (args.language === FileLanguage.JSON) {
+          startPosition.character = getLineContentFromOffset(args.content, node.offset).length;
+
+          // if arguments is empty
+          if (node.offset === lastDescendent.offset) {
+            startPosition.character = position.character;
+          }
+
+          if (lastDescendentLine[lastDescendentLine.length - 1] != "}") {
+            endPosition.line += 1;
+            endPosition.character = 2;
+          }
+        } else {
+          startPosition.character = 1;
+        }
+
+        return [
+          {
+            name: commandName,
+            title: "+ Add arguments...",
+            args: [
+              {
+                openApiSchemaLocation: operation.split("#")[0],
+                operationId: operation.split("#")[1],
+                startPosition,
+                endPosition,
+              } as SwfLanguageServiceCommandArgs[typeof commandName],
+            ],
+          },
+        ];
+      },
+    });
+  },
 
   setupServiceRegistries: (args: SwfLanguageServiceCodeLensesFunctionsArgs): CodeLens[] =>
     !args.displayRhhccIntegration
