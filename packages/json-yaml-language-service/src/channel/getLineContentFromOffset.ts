@@ -32,3 +32,15 @@ export function getLineContentFromOffset(content: string, offset: number): strin
 
   return content.split(eol)[partialContent.length - 1];
 }
+
+export function getLineNumberFromOffset(content: string, offset: number): number {
+  const eol = /\r?\n/;
+
+  if (!content || !offset || content.length < offset) {
+    return 0;
+  }
+
+  const partialContent = content.slice(0, offset).split(eol);
+
+  return partialContent.length - 1;
+}

@@ -152,6 +152,7 @@ export class EditorLanguageService implements IEditorLanguageService {
       content: args.content,
       rootNode: args.rootNode,
       codeCompletionStrategy: args.codeCompletionStrategy,
+      language: this.args.lang.fileLanguage,
       ...args.extraCodeLensesFunctionsArgs,
     };
 

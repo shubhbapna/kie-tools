@@ -20,6 +20,7 @@ import {
   EditorLanguageServiceCommandArgs,
   EditorLanguageServiceCommandExecution,
   EditorLanguageServiceCommandTypes,
+  FileLanguage,
 } from "../api";
 import { findNodesAtLocation } from "./findNodesAtLocation";
 import { ELsCodeCompletionStrategy, ELsJsonPath, ELsNode, ELsNodeType } from "./types";
@@ -28,6 +29,7 @@ export type EditorLanguageServiceCodeLensesFunctionsArgs<CommandTypes = never> =
   document: TextDocument;
   content: string;
   rootNode: ELsNode;
+  language: FileLanguage;
   codeCompletionStrategy: ELsCodeCompletionStrategy<CommandTypes>;
 };
 

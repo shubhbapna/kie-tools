@@ -27,3 +27,4 @@ export * from "./indentText";
 export * from "./nodeUpUntilType";
 export * from "./matchNodeWithLocation";
 export * from "./refValidation";
+export * from "./nodeLastDescendent";
