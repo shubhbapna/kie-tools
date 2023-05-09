@@ -61,6 +61,9 @@ import { Position } from "monaco-editor";
 import { ServerlessWorkflowCombinedEditorChannelApi, SwfFeatureToggle, SwfPreviewOptions } from "../api";
 import { useSwfDiagramEditorChannelApi } from "./hooks/useSwfDiagramEditorChannelApi";
 import { useSwfTextEditorChannelApi } from "./hooks/useSwfTextEditorChannelApi";
+import { Modal } from "@patternfly/react-core";
+import { FormRouterView, FormUri } from "@kie-tools/openapi-form";
+import { SwfLanguageServiceCommandArgs } from "@kie-tools/serverless-workflow-language-service/dist/api";
 
 interface Props {
   locale: string;
@@ -86,6 +89,16 @@ const RefForwardingServerlessWorkflowCombinedEditor: ForwardRefRenderFunction<
   Props
 > = (props, forwardedRef) => {
   const [file, setFile] = useState<File | undefined>(undefined);
+  const [operationId, setOperationId] = useState<string | undefined>(undefined);
+  const [openApiSchemaLocation, setOpenApiSchemaLocation] = useState<string | undefined>(undefined);
+  const [startPosition, setStartPosition] =
+    useState<SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]["startPosition"] | undefined>(
+      undefined
+    );
+  const [endPosition, setEndPosition] =
+    useState<SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]["endPosition"] | undefined>(undefined);
+
+  const [registryStorage, setRegistryStorage] = useState<Record<string, FormUri[]>>({});
   const [embeddedTextEditorFile, setEmbeddedTextEditorFile] = useState<EmbeddedEditorFile>();
   const [embeddedDiagramEditorFile, setEmbeddedDiagramEditorFile] = useState<EmbeddedEditorFile>();
   const editorEnvelopeCtx = useKogitoEditorEnvelopeContext<ServerlessWorkflowCombinedEditorChannelApi>();
@@ -318,6 +331,44 @@ const RefForwardingServerlessWorkflowCombinedEditor: ForwardRefRenderFunction<
     console.error("Error setting content on diagram editor");
   }, []);
 
+  const onOpenForm = useCallback(
+    (args: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]) => {
+      editorEnvelopeCtx.channelApi.requests.kogitoSwfFormRegistryStorage_get().then((registry) => {
+        setRegistryStorage(registry);
+        setOperationId(args.operationId);
+        setOpenApiSchemaLocation(args.openApiSchemaLocation);
+        setStartPosition(args.startPosition);
+        setEndPosition(args.endPosition);
+      });
+    },
+    [editorEnvelopeCtx]
+  );
+
+  const onSubmitForm = useCallback(
+    async (data: object) => {
+      if (startPosition && endPosition) {
+        const swfTextEditorEnvelopeApi = textEditor?.getEnvelopeServer()
+          .envelopeApi as unknown as MessageBusClientApi<ServerlessWorkflowTextEditorEnvelopeApi>;
+
+        swfTextEditorEnvelopeApi.notifications.kogitoSwfTextEditor__executeEdit.send(
+          JSON.stringify(data),
+          {
+            startLineNumber: startPosition.line,
+            endLineNumber: endPosition.line,
+            startColumn: startPosition.character,
+            endColumn: endPosition.character,
+          },
+          `submit-form${operationId}`
+        );
+        setOperationId(undefined);
+        setOpenApiSchemaLocation(undefined);
+        setStartPosition(undefined);
+        setEndPosition(undefined);
+      }
+    },
+    [startPosition, endPosition]
+  );
+
   const useSwfDiagramEditorChannelApiArgs = useMemo(
     () => ({
       channelApi:
@@ -338,6 +389,7 @@ const RefForwardingServerlessWorkflowCombinedEditor: ForwardRefRenderFunction<
       locale: props.locale,
       embeddedEditorFile: embeddedTextEditorFile,
       onEditorReady: onTextEditorReady,
+      onOpenForm,
       swfDiagramEditorEnvelopeApi: diagramEditor?.getEnvelopeServer()
         .envelopeApi as unknown as MessageBusClientApi<ServerlessWorkflowDiagramEditorEnvelopeApi>,
     }),
@@ -403,6 +455,17 @@ const RefForwardingServerlessWorkflowCombinedEditor: ForwardRefRenderFunction<
   return (
     <div style={{ height: "100%" }}>
       <LoadingScreen loading={!isCombinedEditorReady} />
+      <Modal isOpen={!!operationId && !!openApiSchemaLocation} onClose={() => setOperationId(undefined)}>
+        {operationId && openApiSchemaLocation && (
+          <FormRouterView
+            formUri={registryStorage[openApiSchemaLocation]?.find((r) => r.operationId === operationId)}
+            catalogStore={textEditorChannelApi?.kogitoSwfServiceCatalog_services().defaultValue ?? []}
+            openApiSchemaLocation={openApiSchemaLocation}
+            operationId={operationId}
+            onSubmit={onSubmitForm}
+          />
+        )}
+      </Modal>
       {previewOptions?.editorMode === "diagram" ? (
         renderDiagramEditor()
       ) : previewOptions?.editorMode === "text" ? (

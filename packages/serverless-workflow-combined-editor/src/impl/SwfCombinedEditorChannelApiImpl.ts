@@ -30,6 +30,7 @@ import {
   ResourcesList,
 } from "@kie-tools-core/workspace/dist/api";
 import { SwfLanguageServiceChannelApi } from "@kie-tools/serverless-workflow-language-service/dist/api";
+import { FormUri } from "@kie-tools/openapi-form";
 import {
   SwfServiceCatalogChannelApi,
   SwfServiceCatalogService,
@@ -45,6 +46,7 @@ import {
   SwfPreviewOptionsChannelApi,
 } from "../api";
 import { SwfStaticEnvelopeContentProviderChannelApi } from "../api/SwfStaticEnvelopeContentProviderChannelApi";
+import { SwfFormRegistryStorageChannelApi } from "../api/SwfFormRegistryStorageChannelApi";
 
 export class SwfCombinedEditorChannelApiImpl implements ServerlessWorkflowCombinedEditorChannelApi {
   constructor(
@@ -53,7 +55,8 @@ export class SwfCombinedEditorChannelApiImpl implements ServerlessWorkflowCombin
     private readonly swfServiceCatalogApiImpl?: SwfServiceCatalogChannelApi,
     private readonly swfLanguageServiceChannelApiImpl?: SwfLanguageServiceChannelApi,
     private readonly swfPreviewOptionsChannelApiImpl?: SwfPreviewOptionsChannelApi,
-    private readonly swfStaticEnvelopeContentProviderChannelApi?: SwfStaticEnvelopeContentProviderChannelApi
+    private readonly swfStaticEnvelopeContentProviderChannelApi?: SwfStaticEnvelopeContentProviderChannelApi,
+    private readonly swfFormRegistryStorage?: SwfFormRegistryStorageChannelApi
   ) {}
 
   public kogitoEditor_contentRequest(): Promise<EditorContent> {
@@ -174,6 +177,10 @@ export class SwfCombinedEditorChannelApiImpl implements ServerlessWorkflowCombin
         defaultValue: "",
       }
     );
+  }
+
+  async kogitoSwfFormRegistryStorage_get(): Promise<Record<string, FormUri[]>> {
+    return this.swfFormRegistryStorage?.kogitoSwfFormRegistryStorage_get() ?? {};
   }
 
   public kogitoSwfGetMermaidEnvelopeContent(): SharedValueProvider<string> {

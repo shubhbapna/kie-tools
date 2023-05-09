@@ -19,11 +19,10 @@ import { EmbeddedEditorChannelApiImpl } from "@kie-tools-core/editor/dist/embedd
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { useSharedValue } from "@kie-tools-core/envelope-bus/dist/hooks";
 import { ServerlessWorkflowDiagramEditorEnvelopeApi } from "@kie-tools/serverless-workflow-diagram-editor-envelope/dist/api";
-import { SwfServiceCatalogChannelApi } from "@kie-tools/serverless-workflow-service-catalog/dist/api";
+import { SwfLanguageServiceCommandArgs } from "@kie-tools/serverless-workflow-language-service/dist/api";
 import { ServerlessWorkflowTextEditorChannelApi } from "@kie-tools/serverless-workflow-text-editor/dist/api";
 import { useMemo } from "react";
 import { SwfServiceCatalogChannelApiImpl } from "../../impl";
-import { ServerlessWorkflowCombinedEditorChannelApi } from "../../api";
 import { ServerlessWorkflowTextEditorChannelApiImpl } from "../../impl/ServerlessWorkflowTextEditorChannelApiImpl";
 
 export function useSwfTextEditorChannelApi(args: {
@@ -31,6 +30,7 @@ export function useSwfTextEditorChannelApi(args: {
   channelApi?: MessageBusClientApi<ServerlessWorkflowTextEditorChannelApi>;
   embeddedEditorFile?: EmbeddedEditorFile;
   onEditorReady: () => void;
+  onOpenForm: (args: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]) => void;
   swfDiagramEditorEnvelopeApi?: MessageBusClientApi<ServerlessWorkflowDiagramEditorEnvelopeApi>;
 }) {
   const [services] = useSharedValue(args.channelApi?.shared.kogitoSwfServiceCatalog_services);
@@ -68,6 +68,7 @@ export function useSwfTextEditorChannelApi(args: {
       new ServerlessWorkflowTextEditorChannelApiImpl(
         channelApiImpl,
         args.channelApi,
+        args.onOpenForm,
         swfServiceCatalogChannelApiImpl,
         args.swfDiagramEditorEnvelopeApi
       ),

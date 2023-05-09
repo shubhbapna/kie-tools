@@ -37,11 +37,13 @@ import {
 } from "@kie-tools/serverless-workflow-service-catalog/dist/api";
 import { ServerlessWorkflowTextEditorChannelApi } from "@kie-tools/serverless-workflow-text-editor/dist/api";
 import { CodeLens, CompletionItem, Position, Range } from "vscode-languageserver-types";
+import { SwfLanguageServiceCommandArgs } from "@kie-tools/serverless-workflow-language-service/dist/api";
 
 export class ServerlessWorkflowTextEditorChannelApiImpl implements ServerlessWorkflowTextEditorChannelApi {
   constructor(
     private readonly defaultApiImpl: KogitoEditorChannelApi,
     private readonly channelApi: MessageBusClientApi<ServerlessWorkflowTextEditorChannelApi>,
+    private readonly onOpenForm: (args: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]) => void,
     private readonly swfServiceCatalogApiImpl?: SwfServiceCatalogChannelApi,
     private readonly diagramEditorEnvelopeApi?: MessageBusClientApi<ServerlessWorkflowDiagramEditorEnvelopeApi>
   ) {}
@@ -142,5 +144,9 @@ export class ServerlessWorkflowTextEditorChannelApiImpl implements ServerlessWor
 
   public kogitoSwfTextEditor__onSelectionChanged(args: { nodeName: string }): void {
     this.diagramEditorEnvelopeApi?.notifications.kogitoSwfDiagramEditor__highlightNode.send(args);
+  }
+
+  public kogitoSwfTextEditor__openForm(args: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]): void {
+    this.onOpenForm(args);
   }
 }

@@ -20,13 +20,15 @@ import { SwfLanguageServiceChannelApi } from "@kie-tools/serverless-workflow-lan
 import { SwfFeatureToggleChannelApi } from "./SwfFeatureToggleChannelApi";
 import { SwfPreviewOptionsChannelApi } from "./SwfPreviewOptionsChannelApi";
 import { SwfStaticEnvelopeContentProviderChannelApi } from "./SwfStaticEnvelopeContentProviderChannelApi";
+import { SwfFormRegistryStorageChannelApi } from "./SwfFormRegistryStorageChannelApi";
 
 export interface ServerlessWorkflowCombinedEditorChannelApi
   extends KogitoEditorChannelApi,
     SwfFeatureToggleChannelApi,
     SwfLanguageServiceChannelApi,
     SwfPreviewOptionsChannelApi,
-    SwfStaticEnvelopeContentProviderChannelApi {
+    SwfStaticEnvelopeContentProviderChannelApi,
+    SwfFormRegistryStorageChannelApi {
   /**
    * Moves the cursor in the editor to a specified position
    *
