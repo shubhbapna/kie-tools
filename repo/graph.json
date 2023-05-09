@@ -54,6 +54,7 @@
       { "id": "@kie-tools/stunner-editors-dmn-loader" },
       { "id": "chrome-extension-pack-kogito-kie-editors" },
       { "id": "chrome-extension-serverless-workflow-editor" },
+      { "id": "@kie-tools/openapi-form" },
       { "id": "@kie-tools/serverless-workflow-diagram-editor-assets" },
       { "id": "@kie-tools/serverless-workflow-diagram-editor-envelope" },
       { "id": "@kie-tools/serverless-workflow-mermaid-viewer" },
@@ -107,6 +108,7 @@
       { "id": "@kie-tools/unitables-dmn" },
       { "id": "@kie-tools/kn-plugin-workflow" },
       { "id": "@kie-tools/unitables" },
+      { "id": "@kie-tools/serverless-workflow-service-catalog" },
       { "id": "pmml-vscode-extension" },
       { "id": "@kie-tools/serverless-logic-web-tools" },
       { "id": "@kie-tools/text-editor" },
@@ -118,7 +120,6 @@
       { "id": "@kie-tools/serverless-workflow-diagram-editor" },
       { "id": "@kie-tools/serverless-workflow-language-service" },
       { "id": "@kie-tools/serverless-workflow-jq-expressions" },
-      { "id": "@kie-tools/serverless-workflow-service-catalog" },
       { "id": "swf-vscode-extension" },
       { "id": "vscode-extension-dashbuilder-editor" },
       { "id": "vscode-extension-kie-ba-bundle" },
@@ -250,6 +251,7 @@
       { "source": "@kie-tools/kie-bc-editors", "target": "@kie-tools/pmml-editor-marshaller", "weight": 1 },
       { "source": "@kie-tools/stunner-editors", "target": "@kie-tools/stunner-editors-dmn-loader", "weight": 1 },
       { "source": "@kie-tools/stunner-editors", "target": "@kie-tools/maven-config-setup-helper", "weight": 1 },
+      { "source": "@kie-tools/serverless-workflow-combined-editor", "target": "@kie-tools/openapi-form", "weight": 1 },
       {
         "source": "@kie-tools/serverless-workflow-combined-editor",
         "target": "@kie-tools/serverless-workflow-diagram-editor-assets",
@@ -340,6 +342,9 @@
         "target": "@kie-tools/serverless-workflow-combined-editor",
         "weight": 1
       },
+      { "source": "@kie-tools/openapi-form", "target": "@kie-tools-core/editor", "weight": 1 },
+      { "source": "@kie-tools/openapi-form", "target": "@kie-tools/serverless-workflow-service-catalog", "weight": 1 },
+      { "source": "@kie-tools/openapi-form", "target": "@kie-tools/uniforms-patternfly", "weight": 1 },
       {
         "source": "@kie-tools/serverless-workflow-diagram-editor-assets",
         "target": "@kie-tools/serverless-workflow-diagram-editor",
@@ -668,6 +673,11 @@
       { "source": "@kie-tools/unitables", "target": "@kie-tools/boxed-expression-component", "weight": 1 },
       { "source": "@kie-tools/unitables", "target": "@kie-tools/extended-services-api", "weight": 1 },
       { "source": "@kie-tools/unitables", "target": "@kie-tools/form", "weight": 1 },
+      {
+        "source": "@kie-tools/serverless-workflow-service-catalog",
+        "target": "@kie-tools-core/envelope-bus",
+        "weight": 1
+      },
       { "source": "pmml-vscode-extension", "target": "@kie-tools-core/vscode-extension", "weight": 1 },
       { "source": "pmml-vscode-extension", "target": "@kie-tools/pmml-editor", "weight": 1 },
       { "source": "@kie-tools/serverless-logic-web-tools", "target": "@kie-tools-core/kubernetes-bridge", "weight": 1 },
@@ -760,11 +770,6 @@
       {
         "source": "@kie-tools/serverless-workflow-jq-expressions",
         "target": "@kie-tools/serverless-workflow-service-catalog",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/serverless-workflow-service-catalog",
-        "target": "@kie-tools-core/envelope-bus",
         "weight": 1
       },
       { "source": "swf-vscode-extension", "target": "@kie-tools-core/vscode-extension", "weight": 1 },
@@ -898,6 +903,7 @@
     ["@kie-tools-core/monaco-editor", "packages/monaco-editor"],
     ["@kie-tools-core/notifications", "packages/notifications"],
     ["@kie-tools/online-editor", "packages/online-editor"],
+    ["@kie-tools/openapi-form", "packages/openapi-form"],
     ["@kie-tools-core/operating-system", "packages/operating-system"],
     ["@kie-tools-core/patternfly-base", "packages/patternfly-base"],
     ["@kie-tools/pmml-editor", "packages/pmml-editor"],
