@@ -58,6 +58,12 @@ export function initAugmentationCommands(
         editorInstance.trigger("OpenCompletionItemsAtTheBottom", "editor.action.triggerSuggest", {});
       }
     )!,
+    "swf.ls.commands.OpenArgumentsForm": editorInstance.addCommand(
+      0,
+      async (ctx, args: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]) => {
+        channelApi.notifications.kogitoSwfTextEditor__openForm.send(args);
+      }
+    )!,
     "swf.ls.commands.OpenFunctionsWidget": editorInstance.addCommand(
       0,
       async (ctx, args: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenFunctionsWidget"]) => {

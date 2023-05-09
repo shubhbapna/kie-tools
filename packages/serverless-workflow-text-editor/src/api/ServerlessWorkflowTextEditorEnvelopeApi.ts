@@ -15,7 +15,7 @@
  */
 
 import { KogitoEditorEnvelopeApi } from "@kie-tools-core/editor/dist/api";
-import { Position } from "monaco-editor";
+import { IRange, Position } from "monaco-editor";
 
 export interface ServerlessWorkflowTextEditorEnvelopeApi extends KogitoEditorEnvelopeApi {
   kogitoSwfTextEditor__moveCursorToNode(args: { nodeName: string; documentUri?: string }): void;
@@ -26,4 +26,5 @@ export interface ServerlessWorkflowTextEditorEnvelopeApi extends KogitoEditorEnv
    * @returns
    */
   kogitoSwfTextEditor__moveCursorToPosition(position: Position): void;
+  kogitoSwfTextEditor__executeEdit(data: string, range: IRange, id: string): void;
 }

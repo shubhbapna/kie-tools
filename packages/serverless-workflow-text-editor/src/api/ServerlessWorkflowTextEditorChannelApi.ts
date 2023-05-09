@@ -15,7 +15,10 @@
  */
 
 import { KogitoEditorChannelApi } from "@kie-tools-core/editor/dist/api";
-import { SwfLanguageServiceChannelApi } from "@kie-tools/serverless-workflow-language-service/dist/api";
+import {
+  SwfLanguageServiceChannelApi,
+  SwfLanguageServiceCommandArgs,
+} from "@kie-tools/serverless-workflow-language-service/dist/api";
 import { SwfServiceCatalogChannelApi } from "@kie-tools/serverless-workflow-service-catalog/dist/api";
 
 export interface ServerlessWorkflowTextEditorChannelApi
@@ -23,4 +26,5 @@ export interface ServerlessWorkflowTextEditorChannelApi
     SwfServiceCatalogChannelApi,
     SwfLanguageServiceChannelApi {
   kogitoSwfTextEditor__onSelectionChanged(args: { nodeName: string }): void;
+  kogitoSwfTextEditor__openForm(args: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"]): void;
 }

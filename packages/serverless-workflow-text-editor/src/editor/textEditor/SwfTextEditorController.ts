@@ -27,9 +27,11 @@ import {
   getYamlStateNameFromOffset,
   getYamlStateNameOffset,
 } from "@kie-tools/serverless-workflow-language-service/dist/editor";
-import { editor, KeyCode, KeyMod, Position } from "monaco-editor";
+import { indentText } from "@kie-tools/json-yaml-language-service/dist/channel";
+import { editor, KeyCode, KeyMod, Position, IRange } from "monaco-editor";
 import { initJsonSchemaDiagnostics } from "./augmentation/language/json";
 import { initYamlSchemaDiagnostics } from "./augmentation/language/yaml";
+import * as YAML from "yaml";
 
 initJsonSchemaDiagnostics();
 initYamlSchemaDiagnostics();
@@ -45,6 +47,7 @@ export interface SwfTextEditorApi {
   dispose: () => void;
   moveCursorToNode: (nodeName: string) => void;
   moveCursorToPosition: (position: Position) => void;
+  executeEdit: (data: object, range: IRange, id: string) => void;
 }
 
 export enum SwfTextEditorOperation {
@@ -224,6 +227,15 @@ export class SwfTextEditorController implements SwfTextEditorApi {
     }
 
     this.onSelectionChanged(nodeName);
+  }
+
+  public executeEdit(data: object, range: IRange, id: string): void {
+    let text = JSON.stringify(data, null, 22);
+
+    if (this.language === FileLanguage.YAML) {
+      text = indentText(YAML.stringify(data), 12, " ", false);
+    }
+    this.editor?.executeEdits(id, [{ range, text, forceMoveMarkers: true }]);
   }
 
   private getMonacoThemeByEditorTheme(theme?: EditorTheme): string {

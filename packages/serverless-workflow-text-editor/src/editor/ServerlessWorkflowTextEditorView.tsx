@@ -16,7 +16,7 @@
 
 import { Editor, EditorInitArgs, EditorTheme, KogitoEditorEnvelopeContextType } from "@kie-tools-core/editor/dist/api";
 import { Notification } from "@kie-tools-core/notifications/dist/api";
-import { Position } from "monaco-editor";
+import { IRange, Position } from "monaco-editor";
 import * as React from "react";
 import { ServerlessWorkflowTextEditorChannelApi } from "../api";
 import { ServerlessWorkflowTextEditor } from "./ServerlessWorkflowTextEditor";
@@ -24,6 +24,7 @@ import { ServerlessWorkflowTextEditor } from "./ServerlessWorkflowTextEditor";
 export interface ServerlessWorkflowTextEditorApi extends Editor {
   moveCursorToNode(nodeName: string): void;
   moveCursorToPosition(position: Position): void;
+  executeEdit(data: object, range: IRange, id: string): void;
 }
 
 export class ServerlessWorkflowTextEditorView implements ServerlessWorkflowTextEditorApi {
@@ -88,5 +89,9 @@ export class ServerlessWorkflowTextEditorView implements ServerlessWorkflowTextE
 
   public moveCursorToPosition(position: Position): void {
     this.editorRef.current?.moveCursorToPosition(position);
+  }
+
+  public executeEdit(data: object, range: IRange, id: string): void {
+    this.editorRef.current?.executeEdit(data, range, id);
   }
 }

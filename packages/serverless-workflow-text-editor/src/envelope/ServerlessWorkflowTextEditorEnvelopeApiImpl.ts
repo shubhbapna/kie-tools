@@ -17,7 +17,7 @@
 import { EditorFactory, KogitoEditorEnvelopeContextType } from "@kie-tools-core/editor/dist/api";
 import { EditorEnvelopeViewApi, KogitoEditorEnvelopeApiImpl } from "@kie-tools-core/editor/dist/envelope";
 import { EnvelopeApiFactoryArgs } from "@kie-tools-core/envelope";
-import { Position } from "monaco-editor";
+import { Position, IRange } from "monaco-editor";
 import { ServerlessWorkflowTextEditorChannelApi, ServerlessWorkflowTextEditorEnvelopeApi } from "../api";
 import { ServerlessWorkflowTextEditorApi } from "../editor";
 
@@ -49,5 +49,9 @@ export class ServerlessWorkflowTextEditorEnvelopeApiImpl
 
   public kogitoSwfTextEditor__moveCursorToPosition(position: Position): void {
     this.getEditorOrThrowError().moveCursorToPosition(position);
+  }
+
+  public kogitoSwfTextEditor__executeEdit(data: string, range: IRange, id: string): void {
+    this.getEditorOrThrowError().executeEdit(JSON.parse(data), range, id);
   }
 }

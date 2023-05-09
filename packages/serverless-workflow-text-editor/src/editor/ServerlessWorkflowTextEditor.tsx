@@ -20,7 +20,7 @@ import { Notification } from "@kie-tools-core/notifications/dist/api";
 import { SwfTextEditorApi, SwfTextEditorOperation } from "./textEditor/SwfTextEditorController";
 import { SwfTextEditor } from "./textEditor/SwfTextEditor";
 import { ChannelType, EditorTheme, StateControlCommand } from "@kie-tools-core/editor/dist/api";
-import { editor, Position } from "monaco-editor";
+import { editor, IRange, Position } from "monaco-editor";
 
 interface Props {
   /**
@@ -110,6 +110,9 @@ const RefForwardingServerlessWorkflowTextEditor: React.ForwardRefRenderFunction<
         },
         moveCursorToPosition: (position: Position): void => {
           swfTextEditorRef.current?.moveCursorToPosition(position);
+        },
+        executeEdit: (data: object, range: IRange, id: string): void => {
+          swfTextEditorRef.current?.executeEdit(data, range, id);
         },
       };
     },
