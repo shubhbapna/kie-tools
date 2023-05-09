@@ -46,10 +46,7 @@ export function KieSandboxExtendedServicesContextProvider(props: Props) {
     new ExtendedServicesConfig(DEFAULT_KIE_SANDBOX_EXTENDED_SERVICES_HOST, DEFAULT_KIE_SANDBOX_EXTENDED_SERVICES_PORT)
   );
   const bridge = useMemo(() => new KieSandboxExtendedServicesBridge(config.buildUrl()), [config]);
-  const version = useMemo(
-    () => process.env.WEBPACK_REPLACE__kieSandboxExtendedServicesCompatibleVersion ?? "0.0.0",
-    []
-  );
+  const version = useMemo(() => "0.27.0", []);
 
   const saveNewConfig = useCallback((newConfig: ExtendedServicesConfig) => {
     setConfig(newConfig);

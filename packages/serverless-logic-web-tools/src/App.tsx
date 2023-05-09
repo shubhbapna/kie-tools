@@ -26,6 +26,7 @@ import { OpenShiftContextProvider } from "./openshift/OpenShiftContextProvider";
 import { SettingsContextProvider } from "./settings/SettingsContext";
 import { VirtualServiceRegistryContextProvider } from "./virtualServiceRegistry/VirtualServiceRegistryContextProvider";
 import { WorkspacesContextProvider } from "@kie-tools-core/workspaces-git-fs/dist/context/WorkspacesContextProvider";
+import { FormRegistryStorageContextProvider } from "./formRegistryStorage/FormRegistryStorageContextProvider";
 import { SampleContextProvider } from "./home/sample/hooks/SampleContext";
 
 export const App = () => (
@@ -35,6 +36,7 @@ export const App = () => (
       [EditorEnvelopeLocatorContextProvider, {}],
       [EnvContextProvider, {}],
       [KieSandboxExtendedServicesContextProvider, {}],
+      [FormRegistryStorageContextProvider, {}],
       [SettingsContextProvider, {}],
       [
         WorkspacesContextProvider,

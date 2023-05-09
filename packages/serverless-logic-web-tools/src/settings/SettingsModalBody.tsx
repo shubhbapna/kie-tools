@@ -23,6 +23,7 @@ import { ServiceAccountSettingsTab } from "./serviceAccount/ServiceAccountSettin
 import { ServiceRegistrySettingsTab } from "./serviceRegistry/ServiceRegistrySettingsTab";
 import { KieSandboxExtendedServicesSettingsTab } from "./extendedServices/KieSandboxExtendedServicesSettingsTab";
 import { FeaturePreviewSettingsTab } from "./featurePreview/FeaturePreviewSettingsTab";
+import { OpenApiFormSettingsTab } from "./openapi-forms/OpenApiFormSettingsTab";
 
 export enum SettingsTabs {
   GITHUB = "github",
@@ -31,6 +32,7 @@ export enum SettingsTabs {
   SERVICE_ACCOUNT = "serviceAccount",
   SERVICE_REGISTRY = "serviceRegistry",
   FEATURE_PREVIEW = "featurePreview",
+  OPEN_API_FORM = "openAPIForm",
 }
 
 export function SettingsModalBody() {
@@ -78,6 +80,13 @@ export function SettingsModalBody() {
         title={<TabTitleText>Service Registry</TabTitleText>}
       >
         <ServiceRegistrySettingsTab />
+      </Tab>
+      <Tab
+        className="kie-tools--settings-tab"
+        eventKey={SettingsTabs.OPEN_API_FORM}
+        title={<TabTitleText>Open API Form Registry</TabTitleText>}
+      >
+        <OpenApiFormSettingsTab />
       </Tab>
       <Tab
         className="kie-tools--settings-tab"

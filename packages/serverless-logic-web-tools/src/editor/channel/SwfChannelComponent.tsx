@@ -39,12 +39,14 @@ import { EditorChannelComponentProps, EditorChannelComponentRef } from "../WebTo
 import {
   SwfCombinedEditorChannelApiImpl,
   SwfFeatureToggleChannelApiImpl,
+  SwfFormRegistryStorageChannelApiImpl,
 } from "@kie-tools/serverless-workflow-combined-editor/dist/impl";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { ServerlessWorkflowCombinedEditorChannelApi } from "@kie-tools/serverless-workflow-combined-editor/dist/api";
 import { Notification } from "@kie-tools-core/notifications/dist/api";
 import { Position } from "monaco-editor";
 import { useCancelableEffect } from "@kie-tools-core/react-hooks/dist/useCancelableEffect";
+import { useFormRegistryStorageContext } from "../../formRegistryStorage/FormRegistryStorageContext";
 
 const RefForwardingSwfChannelComponent: ForwardRefRenderFunction<
   EditorChannelComponentRef,
@@ -54,6 +56,7 @@ const RefForwardingSwfChannelComponent: ForwardRefRenderFunction<
   const [isReady, setReady] = useState(false);
   const virtualServiceRegistry = useVirtualServiceRegistry();
   const swfFeatureToggle = useSwfFeatureToggle(editor);
+  const formRegistryStorage = useFormRegistryStorageContext();
   const {
     serviceRegistry: { catalogStore },
   } = useSettingsDispatch();
@@ -97,13 +100,17 @@ const RefForwardingSwfChannelComponent: ForwardRefRenderFunction<
     const lsChannelApiImpl = new SwfLanguageServiceChannelApiImpl(languageService);
     const serviceCatalogChannelApiImpl = new SwfServiceCatalogChannelApiImpl(catalogStore);
     const featureToggleChannelApiImpl = new SwfFeatureToggleChannelApiImpl(swfFeatureToggle);
+    const formRegistryStorageChannelApiImpl = new SwfFormRegistryStorageChannelApiImpl(formRegistryStorage);
     return new SwfCombinedEditorChannelApiImpl(
       channelApiImpl,
       featureToggleChannelApiImpl,
       serviceCatalogChannelApiImpl,
-      lsChannelApiImpl
+      lsChannelApiImpl,
+      undefined,
+      undefined,
+      formRegistryStorageChannelApiImpl
     );
-  }, [languageService, catalogStore, swfFeatureToggle, channelApiImpl]);
+  }, [languageService, catalogStore, swfFeatureToggle, channelApiImpl, formRegistryStorage]);
 
   const onNotificationClick = useCallback(
     (notification: Notification) => {
