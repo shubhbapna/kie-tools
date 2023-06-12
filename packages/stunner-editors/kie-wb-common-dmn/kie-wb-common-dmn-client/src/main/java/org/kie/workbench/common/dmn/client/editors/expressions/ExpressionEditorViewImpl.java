@@ -532,6 +532,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
             refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(getCurrentSession(), null));
             fireDomainObjectSelectionEvent(findDomainObject(selectedUUID));
         }
+
+        syncExpressionWithOlderEditor();
     }
 
     public void openDataTypePage() {
@@ -638,7 +640,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         return modelName -> {
             final EntryInfo[] parametersFromModel = pmmlDocumentMetadataProvider.getPMMLDocumentModelParameterNames(documentName, modelName)
                     .stream()
-                    .map(parameter -> new EntryInfo(new Id().getValue(), parameter, BuiltInType.ANY.getName()))
+                    .map(parameter -> new EntryInfo(new Id().getValue(), parameter, BuiltInType.ANY.getName(), null))
                     .toArray(EntryInfo[]::new);
             return new ModelsFromDocument(modelName, parametersFromModel);
         };
@@ -663,6 +665,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     public void reloadEditor() {
         if (isReactBoxedExpressionVisible()) {
             loadNewBoxedExpressionEditor();
+            syncExpressionWithOlderEditor();
         }
     }
 

@@ -37,6 +37,7 @@ export interface SwfLanguageServiceChannelApi {
 
 export type SwfLanguageServiceCommandTypes = EditorLanguageServiceCommandTypes<
   | "swf.ls.commands.ImportFunctionFromCompletionItem"
+  | "swf.ls.commands.ImportEventFromCompletionItem"
   | "swf.ls.commands.OpenFunctionsWidget"
   | "swf.ls.commands.OpenStatesWidget"
   | "swf.ls.commands.OpenServiceRegistriesConfig"
@@ -47,6 +48,10 @@ export type SwfLanguageServiceCommandTypes = EditorLanguageServiceCommandTypes<
 
 export type SwfLanguageServiceCommandArgs = EditorLanguageServiceCommandArgs & {
   "swf.ls.commands.ImportFunctionFromCompletionItem": {
+    containingService: SwfServiceCatalogService;
+    documentUri: string;
+  };
+  "swf.ls.commands.ImportEventFromCompletionItem": {
     containingService: SwfServiceCatalogService;
     documentUri: string;
   };

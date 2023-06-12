@@ -23,3 +23,4 @@ export * from "./NoOpSwfStaticEnvelopeContentProviderChannelApiImpl";
 export * from "./SwfStaticEnvelopeContentProviderChannelApiImpl";
 export * from "./NoOpSwfServiceCatalogChannelApiImpl";
 export * from "./SwfFormRegistryStorageChannelApiImpl";
+export * from "./ServerlessWorkflowCombinedEditorEnvelopeApiImpl";

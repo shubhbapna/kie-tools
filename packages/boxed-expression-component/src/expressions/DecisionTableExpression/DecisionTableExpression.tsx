@@ -203,6 +203,24 @@ export function DecisionTableExpression(
       })
     );
 
+    const outputColumns: ReactTable.Column<ROWTYPE>[] = (decisionTableExpression.output ?? []).map(
+      (outputClause, outputIndex) => ({
+        accessor: outputClause.id ?? generateUuid(),
+        id: outputClause.id,
+        label:
+          decisionTableExpression.output?.length == 1
+            ? decisionTableExpression.name ?? DEFAULT_EXPRESSION_NAME
+            : outputClause.name,
+        dataType: outputClause.dataType,
+        width: outputClause.width ?? DECISION_TABLE_OUTPUT_MIN_WIDTH,
+        setWidth: setOutputColumnWidth(outputIndex),
+        minWidth: DECISION_TABLE_OUTPUT_MIN_WIDTH,
+        groupType: DecisionTableColumnType.OutputClause,
+        cssClasses: "decision-table--output",
+        isRowIndexColumn: false,
+      })
+    );
+
     const outputSection = {
       groupType: DecisionTableColumnType.OutputClause,
       id: decisionTableExpression.id,
@@ -212,18 +230,7 @@ export function DecisionTableExpression(
       cssClasses: "decision-table--output",
       isRowIndexColumn: false,
       width: undefined,
-      columns: (decisionTableExpression.output ?? []).map((outputClause, outputIndex) => ({
-        accessor: outputClause.id ?? generateUuid(),
-        id: outputClause.id,
-        label: outputClause.name,
-        dataType: outputClause.dataType,
-        width: outputClause.width ?? DECISION_TABLE_OUTPUT_MIN_WIDTH,
-        setWidth: setOutputColumnWidth(outputIndex),
-        minWidth: DECISION_TABLE_OUTPUT_MIN_WIDTH,
-        groupType: DecisionTableColumnType.OutputClause,
-        cssClasses: "decision-table--output",
-        isRowIndexColumn: false,
-      })),
+      columns: outputColumns,
     };
 
     const annotationColumns: ReactTable.Column<ROWTYPE>[] = (decisionTableExpression.annotations ?? []).map(
@@ -245,7 +252,11 @@ export function DecisionTableExpression(
       }
     );
 
-    return [...inputColumns, outputSection, ...annotationColumns];
+    if (outputColumns.length == 1) {
+      return [...inputColumns, ...outputColumns, ...annotationColumns];
+    } else {
+      return [...inputColumns, outputSection, ...annotationColumns];
+    }
   }, [
     decisionTableExpression.annotations,
     decisionTableExpression.dataType,
@@ -285,19 +296,13 @@ export function DecisionTableExpression(
           switch (groupType) {
             case DecisionTableColumnType.InputClause:
               const newInputEntries = [...newRules[u.rowIndex].inputEntries];
-              newInputEntries[u.columnIndex] = {
-                id: generateUuid(),
-                content: u.value,
-              };
+              newInputEntries[u.columnIndex].content = u.value;
               newRules[u.rowIndex].inputEntries = newInputEntries;
               n.rules = newRules;
               break;
             case DecisionTableColumnType.OutputClause:
               const newOutputEntries = [...newRules[u.rowIndex].outputEntries];
-              newOutputEntries[u.columnIndex - (prev.input?.length ?? 0)] = {
-                id: generateUuid(),
-                content: u.value,
-              };
+              newOutputEntries[u.columnIndex - (prev.input?.length ?? 0)].content = u.value;
               newRules[u.rowIndex].outputEntries = newOutputEntries;
               n.rules = newRules;
               break;
@@ -327,6 +332,10 @@ export function DecisionTableExpression(
           if (u.column.depth === 0 && u.column.groupType === DecisionTableColumnType.OutputClause) {
             n.name = u.name;
             n.dataType = u.dataType;
+            // Single output column is merged with the aggregator column and should have the same datatype
+            if (n.output?.length === 1) {
+              n.output[0].dataType = u.dataType;
+            }
             continue;
           }
 
@@ -627,8 +636,16 @@ export function DecisionTableExpression(
     (args: { rowIndex: number }) => {
       setExpression((prev: DecisionTableExpressionDefinition) => {
         const duplicatedRule = {
-          ...JSON.parse(JSON.stringify(prev.rules?.[args.rowIndex])),
           id: generateUuid(),
+          inputEntries: prev.rules![args.rowIndex].inputEntries.map((input) => ({
+            ...input,
+            id: generateUuid(),
+          })),
+          outputEntries: prev.rules![args.rowIndex].outputEntries.map((output) => ({
+            ...output,
+            id: generateUuid(),
+          })),
+          annotationEntries: prev.rules![args.rowIndex].annotationEntries.slice(),
         };
 
         const newRules = [...(prev.rules ?? [])];

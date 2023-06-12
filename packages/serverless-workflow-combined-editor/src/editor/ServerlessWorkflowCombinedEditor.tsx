@@ -34,6 +34,8 @@ import {
   ServerlessWorkflowDiagramEditorChannelApi,
   ServerlessWorkflowDiagramEditorEnvelopeApi,
 } from "@kie-tools/serverless-workflow-diagram-editor-envelope/dist/api";
+import { SwfStunnerEditorAPI } from "@kie-tools/serverless-workflow-diagram-editor-envelope/dist/api/SwfStunnerEditorAPI";
+import { SwfStunnerEditor } from "@kie-tools/serverless-workflow-diagram-editor-envelope/dist/envelope/ServerlessWorkflowStunnerEditor";
 import {
   ServerlessWorkflowTextEditorChannelApi,
   ServerlessWorkflowTextEditorEnvelopeApi,
@@ -64,6 +66,7 @@ import { useSwfTextEditorChannelApi } from "./hooks/useSwfTextEditorChannelApi";
 import { Modal } from "@patternfly/react-core";
 import { FormRouterView, FormUri } from "@kie-tools/openapi-form";
 import { SwfLanguageServiceCommandArgs } from "@kie-tools/serverless-workflow-language-service/dist/api";
+import { colorNodes } from "./helpers/ColorNodes";
 
 interface Props {
   locale: string;
@@ -75,6 +78,7 @@ interface Props {
 
 export type ServerlessWorkflowCombinedEditorRef = {
   setContent(path: string, content: string): Promise<void>;
+  colorNodes(nodeNames: string[], color: string, colorConnectedEnds: boolean): void;
 };
 
 interface File {
@@ -83,6 +87,12 @@ interface File {
 }
 
 const ENVELOPE_LOCATOR_TYPE = "swf";
+
+declare global {
+  interface Window {
+    editor: SwfStunnerEditorAPI;
+  }
+}
 
 const RefForwardingServerlessWorkflowCombinedEditor: ForwardRefRenderFunction<
   ServerlessWorkflowCombinedEditorRef | undefined,
@@ -249,6 +259,9 @@ const RefForwardingServerlessWorkflowCombinedEditor: ForwardRefRenderFunction<
         setTheme: async (theme: EditorTheme) => {
           textEditor?.setTheme(theme);
           diagramEditor?.setTheme(theme);
+        },
+        colorNodes: (nodeNames: string[], color: string, colorConnectedEnds: boolean) => {
+          colorNodes(nodeNames, color, colorConnectedEnds);
         },
       };
     },
@@ -438,6 +451,21 @@ const RefForwardingServerlessWorkflowCombinedEditor: ForwardRefRenderFunction<
       )
     );
   };
+
+  window.editor = useMemo(
+    () =>
+      new SwfStunnerEditor(
+        diagramEditor?.getEnvelopeServer()
+          .envelopeApi as unknown as MessageBusClientApi<ServerlessWorkflowDiagramEditorEnvelopeApi>
+      ),
+    [diagramEditor]
+  );
+
+  useEffect(() => {
+    if (isCombinedEditorReady) {
+      editorEnvelopeCtx.channelApi.notifications.kogitoSwfCombinedEditor_combinedEditorReady.send();
+    }
+  }, [isCombinedEditorReady]);
 
   useSubscription(
     editorEnvelopeCtx.channelApi.notifications.kogitoSwfCombinedEditor_moveCursorToPosition,

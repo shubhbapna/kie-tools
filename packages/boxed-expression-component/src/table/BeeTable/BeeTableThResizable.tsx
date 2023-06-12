@@ -16,7 +16,7 @@
 
 import { PopoverPosition } from "@patternfly/react-core/dist/js/components/Popover";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as ReactTable from "react-table";
 import { ExpressionDefinition } from "../../api";
 import { ExpressionDefinitionHeaderMenu } from "../../expressions/ExpressionDefinitionHeaderMenu";
@@ -30,6 +30,7 @@ import {
   isParentColumn,
   useFillingResizingWidth,
 } from "../../resizing/FillingColumnResizingWidth";
+import { useBoxedExpressionEditor } from "../../expressions/BoxedExpressionEditor/BoxedExpressionEditorContext";
 
 export interface BeeTableThResizableProps<R extends object> {
   onColumnAdded?: (args: { beforeIndex: number; groupType: string | undefined }) => void;
@@ -73,6 +74,8 @@ export function BeeTableThResizable<R extends object>({
   forwardRef,
 }: BeeTableThResizableProps<R>) {
   const columnKey = useMemo(() => getColumnKey(column), [column, getColumnKey]);
+
+  const headerCellRef = useRef<HTMLDivElement>(null);
 
   const cssClasses = useMemo(() => {
     const cssClasses = [columnKey, "data-header-cell"];
@@ -118,13 +121,29 @@ export function BeeTableThResizable<R extends object>({
   const [hoverInfo, setHoverInfo] = useState<HoverInfo>({ isHovered: false });
   const [isResizing, setResizing] = useState<boolean>(false);
 
+  const { editorRef } = useBoxedExpressionEditor();
+
   useEffect(() => {
+    function hasTextSelectedInBoxedExpressionEditor() {
+      const selection = window.getSelection();
+      if (selection) {
+        return selection?.toString() && editorRef.current?.contains(selection.focusNode);
+      }
+      return false;
+    }
+
     function onEnter(e: MouseEvent) {
       e.stopPropagation();
+      if (hasTextSelectedInBoxedExpressionEditor()) {
+        return;
+      }
       setHoverInfo(() => getHoverInfo(e, th!));
     }
 
     function onMove(e: MouseEvent) {
+      if (hasTextSelectedInBoxedExpressionEditor()) {
+        return;
+      }
       setHoverInfo(() => getHoverInfo(e, th!));
     }
 
@@ -141,7 +160,11 @@ export function BeeTableThResizable<R extends object>({
       th?.removeEventListener("mousemove", onMove);
       th?.removeEventListener("mouseenter", onEnter);
     };
-  }, [columnIndex, rowIndex, forwardRef]);
+  }, [columnIndex, rowIndex, forwardRef, editorRef]);
+
+  const getAppendToElement = useCallback(() => {
+    return headerCellRef.current!;
+  }, [headerCellRef, headerCellRef.current]);
 
   return (
     <BeeTableTh<R>
@@ -170,13 +193,14 @@ export function BeeTableThResizable<R extends object>({
       shouldShowColumnsInlineControls={shouldShowColumnsInlineControls}
       column={column}
     >
-      <div className="header-cell" data-ouia-component-type="expression-column-header">
+      <div className="header-cell" data-ouia-component-type="expression-column-header" ref={headerCellRef}>
         {column.dataType && isEditableHeader ? (
           <ExpressionDefinitionHeaderMenu
             position={PopoverPosition.bottom}
             selectedExpressionName={column.label}
             selectedDataType={column.dataType}
             onExpressionHeaderUpdated={onExpressionHeaderUpdated}
+            appendTo={getAppendToElement}
           >
             {headerCellInfo}
           </ExpressionDefinitionHeaderMenu>
