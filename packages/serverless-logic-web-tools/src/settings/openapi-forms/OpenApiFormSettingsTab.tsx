@@ -2,30 +2,27 @@ import * as React from "react";
 import { useRef, useEffect } from "react";
 import { RegistryApi, RegistryFormView } from "@kie-tools/openapi-form";
 import { Page, PageSection } from "@patternfly/react-core/dist/js/components/Page";
-import { Text, TextContent, TextVariants } from "@patternfly/react-core/dist/js/components/Text";
-import { useSettings, useSettingsDispatch } from "../SettingsContext";
-import { SettingsTabs } from "../SettingsModalBody";
+import { useSettingsDispatch } from "../SettingsContext";
 import { useFormRegistryStorageContext } from "../../formRegistryStorage/FormRegistryStorageContext";
+import { setPageTitle } from "../../PageTitle";
+import { SETTINGS_PAGE_SECTION_TITLE } from "../SettingsContext";
+import { SettingsPageProps } from "../types";
 
-export function OpenApiFormSettingsTab() {
+const PAGE_TITLE = "Open API Form Registry";
+
+export function OpenApiFormSettings(props: SettingsPageProps) {
   const registryRef = useRef<RegistryApi>(null);
-  const settings = useSettings();
   const formRegistryStorageContext = useFormRegistryStorageContext();
   const settingsDispatch = useSettingsDispatch();
 
   useEffect(() => {
-    if (settings.activeTab === SettingsTabs.OPEN_API_FORM) {
-      settingsDispatch.serviceRegistry.catalogStore.refresh();
-      registryRef.current?.getAll();
-    }
-  }, [settings.activeTab, settingsDispatch.serviceRegistry]);
+    setPageTitle([SETTINGS_PAGE_SECTION_TITLE, PAGE_TITLE]);
+  }, []);
+
   return (
     <Page>
       <PageSection>
-        <PageSection variant={"light"} isFilled={true} style={{ height: "100%" }}>
-          <TextContent>
-            <Text component={TextVariants.h3}>Open API Forms</Text>
-          </TextContent>
+        <PageSection variant={"light"}>
           <RegistryFormView
             ref={registryRef}
             catalogStore={settingsDispatch.serviceRegistry.catalogStore.services}

@@ -26,6 +26,7 @@ import { ServiceAccountSettings } from "../serviceAccount/ServiceAccountSettings
 import { ServiceRegistrySettings } from "../serviceRegistry/ServiceRegistrySettings";
 import { SettingsPageProps } from "../types";
 import { StorageSettings } from "../storage/StorageSettings";
+import { OpenApiFormSettings } from "../openapi-forms/OpenApiFormSettingsTab";
 
 export function SettingsPageRoutes(props: {} & SettingsPageProps) {
   const routes = useRoutes();
@@ -55,6 +56,9 @@ export function SettingsPageRoutes(props: {} & SettingsPageProps) {
       </Route>
       <Route path={routes.settings.storage.path({})}>
         <StorageSettings />
+      </Route>
+      <Route path={routes.settings.open_api_form.path({})}>
+        <OpenApiFormSettings {...settingsPageProps} />
       </Route>
       <Route>
         <Redirect to={routes.settings.github.path({})} />

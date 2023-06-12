@@ -149,6 +149,7 @@ export const routes = {
     service_registry: new Route<{}>(() => `${SETTINGS_ROUTE}/service-registry`),
     feature_preview: new Route<{}>(() => `${SETTINGS_ROUTE}/feature-preview`),
     storage: new Route<{}>(() => `${SETTINGS_ROUTE}/storage`),
+    open_api_form: new Route<{}>(() => `${SETTINGS_ROUTE}/open-api-form`),
   },
 
   static: {

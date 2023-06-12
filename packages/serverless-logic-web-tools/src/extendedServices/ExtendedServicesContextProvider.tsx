@@ -52,7 +52,7 @@ export function ExtendedServicesContextProvider(props: Props) {
 
   const [config, setConfig] = useState(new ExtendedServicesConfig(host, port));
   const bridge = useMemo(() => new ExtendedServicesBridge(config.buildUrl()), [config]);
-  const version = useMemo(() => process.env.WEBPACK_REPLACE__extendedServicesCompatibleVersion ?? "0.0.0", []);
+  const version = useMemo(() => "0.27.0", []);
 
   const saveNewConfig = useCallback((newConfig: ExtendedServicesConfig) => {
     setConfig(newConfig);

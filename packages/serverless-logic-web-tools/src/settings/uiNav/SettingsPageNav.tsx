@@ -78,6 +78,13 @@ export function SettingsPageNav(props: { pathname: string }) {
               <Link to={routes.settings.storage.path({})}>Storage</Link>
             </NavItem>
           )}
+          <NavItem
+            itemId={0}
+            key={`Settings-open_api_form-nav`}
+            isActive={props.pathname === routes.settings.open_api_form.path({})}
+          >
+            <Link to={routes.settings.open_api_form.path({})}>Open API Form Registry</Link>
+          </NavItem>
         </NavList>
       </Nav>
     </>
