@@ -14,5 +14,8 @@
  * limitations under the License.
  */
 
-export * from "./FormGeneratorApi";
-export * from "./FormSchemaBase";
+import { FormRouterViewProps } from "../router";
+
+export interface FormRouterApi {
+  setData(data: FormRouterViewProps): Promise<void>;
+}

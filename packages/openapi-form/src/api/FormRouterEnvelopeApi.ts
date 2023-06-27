@@ -14,5 +14,18 @@
  * limitations under the License.
  */
 
-export * from "./FormGeneratorApi";
-export * from "./FormSchemaBase";
+import { FormRouterViewProps } from "../router";
+
+export interface FormRouterEnvelopeApi {
+  form__init(association: Association, initArgs: FormRouterInitArgs): Promise<void>;
+  form__setData(data: FormRouterViewProps): Promise<void>;
+}
+
+export interface Association {
+  origin: string;
+  envelopeServerId: string;
+}
+
+export interface FormRouterInitArgs {
+  name: string;
+}

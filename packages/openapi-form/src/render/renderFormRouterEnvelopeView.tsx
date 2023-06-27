@@ -14,5 +14,16 @@
  * limitations under the License.
  */
 
-export * from "./FormGeneratorApi";
-export * from "./FormSchemaBase";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { ContainerType } from "@kie-tools-core/envelope/dist/api";
+import { FormRouterEnvelopeView } from "../view";
+
+export const renderFormEnvelopeView = (container: HTMLElement) =>
+  new Promise<void>((res) => {
+    ReactDOM.render(
+      <FormRouterEnvelopeView envelopeConfig={{ containerType: ContainerType.IFRAME }} />,
+      container,
+      () => res()
+    );
+  });

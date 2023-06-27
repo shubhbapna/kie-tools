@@ -14,5 +14,7 @@
  * limitations under the License.
  */
 
-export * from "./FormGeneratorApi";
-export * from "./FormSchemaBase";
+export interface FormRouterChannelApi {
+  form__submit(data: any): void;
+  form__ready(): void;
+}

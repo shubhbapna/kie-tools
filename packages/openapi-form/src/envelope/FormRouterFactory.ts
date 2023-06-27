@@ -14,5 +14,12 @@
  * limitations under the License.
  */
 
-export * from "./FormGeneratorApi";
-export * from "./FormSchemaBase";
+import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
+import { FormRouterInitArgs, FormRouterChannelApi, FormRouterApi } from "../api";
+
+export interface FormRouterFactory {
+  create(
+    initArgs: FormRouterInitArgs,
+    channelApi: MessageBusClientApi<FormRouterChannelApi>
+  ): () => FormRouterApi | null;
+}
