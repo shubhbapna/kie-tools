@@ -91,7 +91,7 @@ export default async (env: any, argv: any) => {
           "serverless-workflow-diagram-editor-envelope": "./src/envelope/ServerlessWorkflowDiagramEditorEnvelopeApp.ts",
           "serverless-workflow-text-editor-envelope": "./src/envelope/ServerlessWorkflowTextEditorEnvelopeApp.ts",
           "serverless-workflow-mermaid-viewer-envelope": "./src/envelope/ServerlessWorkflowMermaidViewerEnvelopeApp.ts",
-          "serverless-workflow-form-envelope": "./src/envelope/ServerlessWorkflowEnvelopeApp.ts",
+          "serverless-workflow-form-envelope": "./src/envelope/ServerlessWorkflowFormEnvelopeApp.ts",
         },
         plugins: [
           new HtmlWebpackPlugin({
