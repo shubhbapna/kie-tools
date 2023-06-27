@@ -91,6 +91,7 @@ export default async (env: any, argv: any) => {
           "serverless-workflow-diagram-editor-envelope": "./src/envelope/ServerlessWorkflowDiagramEditorEnvelopeApp.ts",
           "serverless-workflow-text-editor-envelope": "./src/envelope/ServerlessWorkflowTextEditorEnvelopeApp.ts",
           "serverless-workflow-mermaid-viewer-envelope": "./src/envelope/ServerlessWorkflowMermaidViewerEnvelopeApp.ts",
+          "serverless-workflow-form-envelope": "./src/envelope/ServerlessWorkflowEnvelopeApp.ts",
         },
         plugins: [
           new HtmlWebpackPlugin({
@@ -157,6 +158,10 @@ export default async (env: any, argv: any) => {
                 from: "../dashbuilder-editor/dist/dashbuilder-client/",
                 to: "./dashbuilder-client",
                 globOptions: { ignore: ["**/WEB-INF/**/*"] }, // "**/*.html" omitted because dashbuilder-client/index.html is needed
+              },
+              {
+                from: path.resolve(__dirname, "./static/envelope/serverless-workflow-form-envelope.html"),
+                to: "./serverless-workflow-form-envelope.html",
               },
             ],
           }),
