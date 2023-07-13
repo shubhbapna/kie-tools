@@ -198,16 +198,16 @@ export const SwfLanguageServiceCodeLenses: EditorLanguageServiceCodeLenses = {
         };
 
         if (args.language === FileLanguage.JSON) {
-          startPosition.character = getLineContentFromOffset(args.content, node.offset).length;
+          startPosition.character = getLineContentFromOffset(args.content, node.offset).length - 1;
 
-          // if arguments is empty
-          if (node.offset === lastDescendent.offset) {
+          // if arguments is within the same line
+          if (startPosition.line === endPosition.line) {
             startPosition.character = position.character;
           }
 
           if (lastDescendentLine[lastDescendentLine.length - 1] != "}") {
             endPosition.line += 1;
-            endPosition.character = 2;
+            // endPosition.character = 2;
           }
         } else {
           startPosition.character = 1;
