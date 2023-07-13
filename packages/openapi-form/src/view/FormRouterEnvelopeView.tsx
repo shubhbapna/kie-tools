@@ -19,16 +19,22 @@ import { useEffect, useState } from "react";
 import { EnvelopeDivConfig, EnvelopeIFrameConfig } from "@kie-tools-core/envelope";
 import { init } from "../envelope";
 import { FormRouterFactoryImpl } from "./FormRouterFactoryImpl";
+import { EnvelopeBus } from "@kie-tools-core/envelope-bus/dist/api";
 
-export const FormRouterEnvelopeView = (props: { envelopeConfig: EnvelopeDivConfig | EnvelopeIFrameConfig }) => {
+export const FormRouterEnvelopeView = (props: {
+  envelopeConfig: EnvelopeDivConfig | EnvelopeIFrameConfig;
+  bus?: EnvelopeBus;
+}) => {
   const [view, setView] = useState<React.ReactElement>();
 
   useEffect(() => {
     init({
-      bus: { postMessage: (message, _targetOrigin, transfer) => window.parent.postMessage(message, "*", transfer) },
+      bus: props.bus ?? {
+        postMessage: (message, _targetOrigin, transfer) => window.parent.postMessage(message, "*", transfer),
+      },
       formFactory: new FormRouterFactoryImpl(setView),
     }).catch((error) => console.error(error));
-  }, [props.envelopeConfig]);
+  }, [props.envelopeConfig, props.bus]);
 
   return <div>{view}</div>;
 };

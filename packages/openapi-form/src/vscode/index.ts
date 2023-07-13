@@ -14,17 +14,4 @@
  * limitations under the License.
  */
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { ContainerType } from "@kie-tools-core/envelope/dist/api";
-import { FormRouterEnvelopeView } from "../view";
-import { EnvelopeBus } from "@kie-tools-core/envelope-bus/dist/api";
-
-export const renderFormEnvelopeView = (container: HTMLElement, bus?: EnvelopeBus) =>
-  new Promise<void>((res) => {
-    ReactDOM.render(
-      <FormRouterEnvelopeView envelopeConfig={{ containerType: ContainerType.IFRAME }} bus={bus} />,
-      container,
-      () => res()
-    );
-  });
+export * from "./FormRouterWebview";
