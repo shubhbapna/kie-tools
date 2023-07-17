@@ -358,6 +358,7 @@ digraph G {
   "@kie-tools/serverless-logic-web-tools-swf-dev-mode-image" -> "@kie-tools/serverless-logic-web-tools-swf-deployment-quarkus-app" [ style = "dashed", color = "black" ];
   "@kie-tools/serverless-logic-web-tools-swf-dev-mode-image" -> "@kie-tools/serverless-logic-web-tools-swf-dev-mode-image-env" [ style = "dashed", color = "black" ];
   "@kie-tools/serverless-logic-web-tools-swf-dev-mode-image-env" -> "@kie-tools/root-env" [ style = "dashed", color = "black" ];
+  "@kie-tools/serverless-workflow-combined-editor" -> "@kie-tools/openapi-form" [ style = "solid", color = "blue" ];
   "@kie-tools/serverless-workflow-combined-editor" -> "@kie-tools/serverless-workflow-diagram-editor-assets" [ style = "solid", color = "blue" ];
   "@kie-tools/serverless-workflow-combined-editor" -> "@kie-tools/serverless-workflow-diagram-editor-envelope" [ style = "solid", color = "blue" ];
   "@kie-tools/serverless-workflow-combined-editor" -> "@kie-tools/serverless-workflow-mermaid-viewer" [ style = "solid", color = "blue" ];
@@ -377,6 +378,7 @@ digraph G {
   "@kie-tools/serverless-workflow-text-editor" -> "@kie-tools/serverless-workflow-language-service" [ style = "solid", color = "blue" ];
   "@kie-tools/serverless-workflow-text-editor" -> "@kie-tools-core/webpack-base" [ style = "dashed", color = "blue" ];
   "swf-vscode-extension" -> "@kie-tools-core/vscode-extension" [ style = "solid", color = "blue" ];
+  "swf-vscode-extension" -> "@kie-tools/openapi-form" [ style = "solid", color = "blue" ];
   "swf-vscode-extension" -> "@kie-tools/serverless-workflow-diagram-editor-envelope" [ style = "solid", color = "blue" ];
   "swf-vscode-extension" -> "@kie-tools/serverless-workflow-language-service" [ style = "solid", color = "blue" ];
   "swf-vscode-extension" -> "@kie-tools/serverless-workflow-mermaid-viewer" [ style = "solid", color = "blue" ];

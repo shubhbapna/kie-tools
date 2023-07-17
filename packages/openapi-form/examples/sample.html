@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>HTML Forms</h2>
+
+    <form id="custom-form">
+      <label>name: <input type="text" id="first-name" /></label>
+      <br /><br />
+      <button type="submit">Submit form</button>
+    </form>
+    <script>
+      function submit(event) {
+        event.preventDefault();
+        const input = document.getElementById("first-name");
+        console.log(input.value);
+        window.parent.postMessage(
+          {
+            name: input.value,
+          },
+          "*"
+        );
+      }
+
+      const form = document.getElementById("custom-form");
+      if (form) {
+        form.addEventListener("submit", submit);
+      }
+    </script>
+  </body>
+</html>

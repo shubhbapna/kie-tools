@@ -681,6 +681,11 @@
       { "source": "@kie-tools/unitables", "target": "@kie-tools-core/react-hooks", "weight": 1 },
       { "source": "@kie-tools/unitables", "target": "@kie-tools/boxed-expression-component", "weight": 1 },
       { "source": "@kie-tools/unitables", "target": "@kie-tools/dmn-runner", "weight": 1 },
+      {
+        "source": "@kie-tools/serverless-workflow-service-catalog",
+        "target": "@kie-tools-core/envelope-bus",
+        "weight": 1
+      },
       { "source": "pmml-vscode-extension", "target": "@kie-tools-core/vscode-extension", "weight": 1 },
       { "source": "pmml-vscode-extension", "target": "@kie-tools/pmml-editor", "weight": 1 },
       { "source": "@kie-tools/serverless-logic-web-tools", "target": "@kie-tools-core/kubernetes-bridge", "weight": 1 },
@@ -807,6 +812,7 @@
         "weight": 1
       },
       { "source": "swf-vscode-extension", "target": "@kie-tools-core/vscode-extension", "weight": 1 },
+      { "source": "swf-vscode-extension", "target": "@kie-tools/openapi-form", "weight": 1 },
       {
         "source": "swf-vscode-extension",
         "target": "@kie-tools/serverless-workflow-diagram-editor-envelope",

@@ -27,6 +27,13 @@ export interface FormRouterViewProps {
 }
 
 export const FormRouterView = (props: FormRouterViewProps & { onSubmit: (data: object) => void }) => {
+  if (props.formUri?.routeTo) {
+    window.addEventListener("message", (event) => {
+      if (event.origin === new URL(props.formUri?.routeTo!).origin) {
+        props.onSubmit(event.data);
+      }
+    });
+  }
   return (
     <>
       {props.formUri?.routeTo ? (
