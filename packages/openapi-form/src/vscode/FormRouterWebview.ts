@@ -52,14 +52,19 @@ export class FormRouterWebview {
     }
   }
 
-  public open(pageId: string, opts: { onClose: () => void }) {
+  public open(pageId: string, opts: { onClose: () => void; col?: ViewColumn }) {
     // Creates a Webview instance. This will open a new tab on VS Code.
-    const webviewPanel = vscode.window.createWebviewPanel(pageId, this.envelopeLocator.title, ViewColumn.Beside, {
-      retainContextWhenHidden: true,
-      enableCommandUris: true,
-      enableScripts: true,
-      localResourceRoots: [vscode.Uri.file(this.context.extensionPath)],
-    });
+    const webviewPanel = vscode.window.createWebviewPanel(
+      pageId,
+      this.envelopeLocator.title,
+      opts.col ?? ViewColumn.Beside,
+      {
+        retainContextWhenHidden: true,
+        enableCommandUris: true,
+        enableScripts: true,
+        localResourceRoots: [vscode.Uri.file(this.context.extensionPath)],
+      }
+    );
 
     // Creates an absolute path for the script that the Webview needs to load.
     const scriptSrc = webviewPanel.webview
@@ -77,6 +82,8 @@ export class FormRouterWebview {
                 padding: 10%;
                 height: 100%;
                 width: 100%
+                background-color: "transparent"
+                color: "black"
             }
           </style>
           <meta charset="UTF-8">

@@ -8,7 +8,8 @@
   "types": "./dist/index.d.ts",
   "main": "dist/index.js",
   "scripts": {
-    "build:dev": "rimraf dist && tsc -p tsconfig.json",
+    "build:dev": "rimraf dist && pnpm copy:css && tsc -p tsconfig.json",
+    "copy:css": "copyfiles -u 1 \"src/**/*.{sass,scss,css}\" dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "@types/react": "^17.0.6",
     "@types/react-dom": "^17.0.5",
     "@types/vscode": "^1.66.0",
+    "copyfiles": "^2.4.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.4.2"
   }

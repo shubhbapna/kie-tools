@@ -39,11 +39,17 @@ module.exports = async (env) => [
     entry: {
       "extension/extension": "./src/extension/extension.ts",
     },
+    module: {
+      rules: [...patternflyBase.webpackModuleRules],
+    },
   }),
   merge(commonConfig(env), {
     target: "webworker",
     entry: {
       "extension/extensionWeb": "./src/extension/extension.ts",
+    },
+    module: {
+      rules: [...patternflyBase.webpackModuleRules],
     },
   }),
   merge(commonConfig(env), {
@@ -53,6 +59,8 @@ module.exports = async (env) => [
         "./src/webview/ServerlessWorkflowDiagramEditorEnvelopeApp.ts",
       "webview/editors/serverless-workflow/serverless-workflow-mermaid-viewer-envelope":
         "./src/webview/ServerlessWorkflowMermaidViewerEnvelopeApp.ts",
+      "webview/editors/serverless-workflow/serverless-workflow-form-envelope":
+        "./src/webview/ServerlessWorkflowFormEnvelopeApp.ts",
     },
     plugins: [
       new CopyWebpackPlugin({

@@ -19,6 +19,7 @@ export const COMMAND_IDS = {
   silentlyGetPreviewSvg: "extension.kogito.swf.silentlyGenerateSvg",
   openAsDiagram: "extension.kogito.swf.openAsDiagram",
   openAsSource: "extension.kogito.swf.openAsSource",
+  openArgumentForm: "extension.kogito.swf.ls.openArgumentForm",
   swfLsCommand: "extension.kogito.swf.ls.command",
   setupAutomaticallyOpenDiagramEditorAlongsideTextEditor:
     "extension.kogito.swf.setupAutomaticallyOpenDiagramEditorAlongsideTextEditor",
@@ -26,4 +27,6 @@ export const COMMAND_IDS = {
   serviceRegistriesLogin: "extension.kogito.swf.serviceRegistries.login",
   serviceRegistriesRefresh: "extension.kogito.swf.serviceRegistries.refresh",
   serviceRegistriesConfig: "extension.kogito.swf.serviceRegistries.config",
+  formRegistryAdd: "extension.kogito.swf.formRegistry.add",
+  formRegistryRemove: "extension.kogito.swf.formRegistry.remove",
 };

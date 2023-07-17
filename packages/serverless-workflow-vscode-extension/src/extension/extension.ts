@@ -31,6 +31,9 @@ import { setupDiagramEditorCompanionTab } from "./setupDiagramEditorCompanionTab
 import { COMMAND_IDS } from "./commandIds";
 import { ServiceRegistriesStore } from "./serviceCatalog/serviceRegistry";
 import { RedHatAuthExtensionStateStore } from "./RedHatAuthExtensionStateStore";
+import { FormRouterCommands } from "./argumentForm/FormRouterCommands";
+import { InMemomryStorage } from "./argumentForm/FormRegistryStorageImpl";
+import { FormRegistryCommand } from "./argumentForm/FormRegistryCommands";
 
 export async function activate(context: vscode.ExtensionContext) {
   console.info("Extension is alive.");
@@ -108,6 +111,8 @@ export async function activate(context: vscode.ExtensionContext) {
     backendProxy,
   });
 
+  const formRegistryStore = new InMemomryStorage();
+
   setupBuiltInVsCodeEditorSwfContributions({
     context,
     vsCodeSwfLanguageService,
@@ -120,6 +125,21 @@ export async function activate(context: vscode.ExtensionContext) {
     context,
     configuration,
     serviceRegistryStore: serviceRegistriesStore,
+  });
+
+  const formRegistryCommand = new FormRegistryCommand();
+  formRegistryCommand.register({
+    context,
+    store: formRegistryStore,
+  });
+
+  const formRouterCommands = new FormRouterCommands();
+  formRouterCommands.setupFormRouterCommands({
+    context,
+    configuration,
+    kieEditorsStore,
+    catalogStore: serviceRegistriesStore.storedServices,
+    formRegistryStore,
   });
 
   await setupDiagramEditorCompanionTab({

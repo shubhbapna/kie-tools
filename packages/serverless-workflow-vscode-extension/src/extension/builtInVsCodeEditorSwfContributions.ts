@@ -98,6 +98,12 @@ export function setupBuiltInVsCodeEditorSwfContributions(args: {
     "swf.ls.commands.RefreshServiceRegistries": () => {
       vscode.commands.executeCommand(COMMAND_IDS.serviceRegistriesRefresh);
     },
+    "swf.ls.commands.OpenArgumentsForm": (args) => {
+      if (!vscode.window.activeTextEditor) {
+        return;
+      }
+      vscode.commands.executeCommand(COMMAND_IDS.openArgumentForm, args, vscode.window.activeTextEditor);
+    },
   };
 
   const swfDiagnosticsCollection = vscode.languages.createDiagnosticCollection("SWF-DIAGNOSTICS-COLLECTION");

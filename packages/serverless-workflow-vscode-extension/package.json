@@ -40,6 +40,8 @@
     "@kie-tools-core/vscode-extension": "workspace:*",
     "@kie-tools-core/vscode-java-code-completion": "workspace:*",
     "@kie-tools-core/workspace": "workspace:*",
+    "@kie-tools/json-yaml-language-service": "^0.30.0",
+    "@kie-tools/openapi-form": "workspace:*",
     "@kie-tools/serverless-workflow-diagram-editor-envelope": "workspace:*",
     "@kie-tools/serverless-workflow-jq-expressions": "workspace:*",
     "@kie-tools/serverless-workflow-language-service": "workspace:*",
@@ -132,6 +134,14 @@
       {
         "command": "extension.kogito.swf.serviceRegistries.config",
         "title": "Serverless Workflow: Configure Service Registries"
+      },
+      {
+        "command": "extension.kogito.swf.formRegistry.add",
+        "title": "Serverless Workflow: Add custom form for arguments"
+      },
+      {
+        "command": "extension.kogito.swf.formRegistry.remove",
+        "title": "Serverless Workflow: Remove custom form for arguments"
       }
     ],
     "configuration": {

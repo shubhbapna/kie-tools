@@ -19,6 +19,7 @@ import { FormRouterApi, FormRouterChannelApi, FormRouterInitArgs } from "../api"
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { FormRouterView, FormRouterViewProps } from "../router/FormRouterView";
 import "@patternfly/react-core/dist/styles/base.css";
+import "./style.scss";
 
 interface Props {
   initArgs: FormRouterInitArgs;
