@@ -33,6 +33,8 @@ import { indentText } from "@kie-tools/json-yaml-language-service/dist/channel";
 export class FormRouterCommands {
   private envelopeApiImpl: MessageBusClientApi<FormRouterEnvelopeApi> | undefined;
   private formRouterWebview: FormRouterWebview | undefined;
+  private startPosition: vscode.Position | undefined;
+  private endPosition: vscode.Position | undefined;
 
   private onCloseWebview() {
     this.formRouterWebview?.close();
@@ -52,30 +54,7 @@ export class FormRouterCommands {
         name: "vscode-embedded-form",
       },
       {
-        form__submit: (data) => {
-          console.log(data);
-          console.log(cmdArgs.startPosition, cmdArgs.endPosition);
-          textEditor.edit((editBuilder) => {
-            const fileType = getFileLanguageOrThrow(textEditor.document.fileName);
-
-            const stringifier = (data: JSON) => {
-              return fileType === FileLanguage.YAML
-                ? indentText(YAML.stringify(data), 12, " ", false)
-                : JSON.stringify(data);
-            };
-
-            const startLinePad = fileType === FileLanguage.YAML ? 1 : 0;
-
-            const startPosition = new vscode.Position(
-              cmdArgs.startPosition.line - 1,
-              cmdArgs.startPosition.character - startLinePad
-            );
-            const endPosition = new vscode.Position(cmdArgs.endPosition.line - 1, cmdArgs.endPosition.character);
-
-            editBuilder.replace(new vscode.Range(startPosition, endPosition), stringifier(data));
-            this.onCloseWebview();
-          });
-        },
+        form__submit: this.onSubmit.bind(this, textEditor),
         form__ready: () => {},
       }
     );
@@ -95,6 +74,9 @@ export class FormRouterCommands {
           cmdArgs: SwfLanguageServiceCommandArgs["swf.ls.commands.OpenArgumentsForm"],
           textEditor: vscode.TextEditor
         ) => {
+          this.startPosition = new vscode.Position(cmdArgs.startPosition.line - 1, cmdArgs.startPosition.character);
+          this.endPosition = new vscode.Position(cmdArgs.endPosition.line - 1, cmdArgs.endPosition.character);
+
           if (!this.formRouterWebview) {
             this.formRouterWebview = this.createNewWebview(args.context, cmdArgs, textEditor);
             // rearrange into 1x2 layout
@@ -130,5 +112,22 @@ export class FormRouterCommands {
         }
       )
     );
+  }
+
+  private onSubmit(textEditor: vscode.TextEditor, data: JSON) {
+    textEditor.edit((editBuilder) => {
+      const fileType = getFileLanguageOrThrow(textEditor.document.fileName);
+
+      const stringifier = (data: JSON) => {
+        return fileType === FileLanguage.YAML ? indentText(YAML.stringify(data), 12, " ", false) : JSON.stringify(data);
+      };
+
+      const startLinePad = fileType === FileLanguage.YAML ? 1 : 0;
+
+      this.startPosition = new vscode.Position(this.startPosition!.line, this.startPosition!.character - startLinePad);
+
+      editBuilder.replace(new vscode.Range(this.startPosition, this.endPosition!), stringifier(data));
+      this.onCloseWebview();
+    });
   }
 }
