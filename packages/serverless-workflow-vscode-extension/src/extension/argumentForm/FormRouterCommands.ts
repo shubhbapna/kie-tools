@@ -26,9 +26,15 @@ import { FormRouterEnvelopeApi, RegistryStorageApi } from "@kie-tools/openapi-fo
 import { FormRouterWebview } from "@kie-tools/openapi-form/dist/vscode";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { VsCodeKieEditorStore } from "@kie-tools-core/vscode-extension";
-import { SwfServiceCatalogService } from "@kie-tools/serverless-workflow-service-catalog/dist/api";
+import {
+  SwfCatalogSourceType,
+  SwfServiceCatalogService,
+} from "@kie-tools/serverless-workflow-service-catalog/dist/api";
 import * as YAML from "yaml";
 import { indentText } from "@kie-tools/json-yaml-language-service/dist/channel";
+import { parseApiContent } from "@kie-tools/serverless-workflow-service-catalog/dist/channel";
+import { readFileSync } from "fs";
+import { posix as posixPath } from "path";
 
 export class FormRouterCommands {
   private envelopeApiImpl: MessageBusClientApi<FormRouterEnvelopeApi> | undefined;
@@ -96,16 +102,24 @@ export class FormRouterCommands {
 
           this.formRouterWebview.updateTitle(cmdArgs.operationId);
 
+          const openApiSchemaLocation = this.getOpenApiSchemaLocation(
+            textEditor,
+            args.configuration,
+            cmdArgs.openApiSchemaLocation
+          );
+
+          const catalogStore = this.getCatalogStore(openApiSchemaLocation, args.catalogStore);
+
           console.log("form data", {
-            catalogStore: args.catalogStore,
-            openApiSchemaLocation: cmdArgs.openApiSchemaLocation,
+            catalogStore: catalogStore,
+            openApiSchemaLocation: openApiSchemaLocation,
             operationId: cmdArgs.operationId,
             formUri: await args.formRegistryStore.get(cmdArgs.operationId, cmdArgs.openApiSchemaLocation),
           });
 
           this.envelopeApiImpl?.requests.form__setData({
-            catalogStore: args.catalogStore,
-            openApiSchemaLocation: cmdArgs.openApiSchemaLocation,
+            catalogStore,
+            openApiSchemaLocation,
             operationId: cmdArgs.operationId,
             formUri: await args.formRegistryStore.get(cmdArgs.operationId, cmdArgs.openApiSchemaLocation),
           });
@@ -129,5 +143,37 @@ export class FormRouterCommands {
       editBuilder.replace(new vscode.Range(this.startPosition, this.endPosition!), stringifier(data));
       this.onCloseWebview();
     });
+  }
+
+  private getOpenApiSchemaLocation(
+    textEditor: vscode.TextEditor,
+    configuration: SwfVsCodeExtensionConfiguration,
+    openApiSchemaLocation: string
+  ) {
+    if (/^https?:\/\//.test(openApiSchemaLocation)) {
+      return openApiSchemaLocation;
+    }
+
+    const specsBaseDir = configuration.getInterpolatedSpecsDirAbsolutePosixPath({
+      baseFileAbsolutePosixPath: vscode.Uri.parse(textEditor.document.uri.toString()).path,
+    });
+    const specsFilename = posixPath.basename(openApiSchemaLocation);
+    return posixPath.join(specsBaseDir, specsFilename);
+  }
+
+  private getCatalogStore(openApiSchemaLocation: string, defaultCatalogStore: SwfServiceCatalogService[]) {
+    if (/^https?:\/\//.test(openApiSchemaLocation)) {
+      return defaultCatalogStore;
+    }
+    return [
+      parseApiContent({
+        serviceFileName: posixPath.basename(openApiSchemaLocation),
+        serviceFileContent: readFileSync(openApiSchemaLocation, "utf8"),
+        source: {
+          type: SwfCatalogSourceType.LOCAL_FS,
+          absoluteFilePath: openApiSchemaLocation,
+        },
+      }),
+    ];
   }
 }

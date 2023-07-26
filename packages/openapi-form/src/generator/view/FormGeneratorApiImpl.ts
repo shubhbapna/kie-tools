@@ -48,9 +48,14 @@ export class FormGeneratorApiImpl implements FormGeneratorApi {
 
   private locateOperationArguments(openApiSchemaLocation: string, operationId: string) {
     return this.catalogStore
-      .find((c) =>
-        c.source.type === SwfCatalogSourceType.SERVICE_REGISTRY ? c.source.url === openApiSchemaLocation : false
-      )
+      .find((c) => {
+        if (c.source.type === SwfCatalogSourceType.SERVICE_REGISTRY) {
+          return c.source.url === openApiSchemaLocation;
+        } else if (c.source.type === SwfCatalogSourceType.LOCAL_FS) {
+          return c.source.absoluteFilePath === openApiSchemaLocation;
+        }
+        return false;
+      })
       ?.functions.find((f) => f.name === operationId)?.arguments;
   }
 
